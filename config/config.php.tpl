@@ -111,6 +111,11 @@ $CONFIG['socket'] = NULL;
 $CONFIG['welcome_text'] =
 '<h3>Welcome on cgraphz</h3>
 ';
+# Title of the Webpages
+$CONFIG['page_title'] = 'Monitor';
+#Menu Header
+$CONFIG['page_header'] = 'CGraphz';
+
 
 function my_autoload ($pClassName) {
 	include(DIR_FSROOT . "/modules/" . $pClassName . ".php");

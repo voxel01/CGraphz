@@ -6,7 +6,7 @@
 <div id="div_menu">
 
 
-<h1>CGRAPHZ</h1>
+<h1><?php echo $CONFIG['page_header'];?></h1>
 <?php
 // Affichage du menu Dashboard si l'utilisateur a les droits
 $perm_mod = new PERMS();

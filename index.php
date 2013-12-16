@@ -61,7 +61,7 @@
 	?>
 
 	
-	<title>CGRAPHZ <?php echo CGRAPHZ_VERSION; ?></title>
+	<title><?php echo $CONFIG['page_title'];?> | CGRAPHZ <?php echo CGRAPHZ_VERSION; ?></title>
 </head>
 <body id="id_body">
 <div id="content">

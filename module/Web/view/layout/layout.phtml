@@ -1,0 +1,61 @@
+i<?php echo $this->doctype(); ?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle('CGRAPHZ')->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+                        ->prependStylesheet($this->basePath() . '/lib/css/redmond/jquery-ui-1.10.0.custom.css','screen')
+                        ->prependStylesheet($this->basePath() . '/lib/css/jquery-ui-timepicker-addon.css','screen')
+                        ->prependStylesheet($this->basePath() . '/style/000.css','screen')
+                        ->prependStylesheet($this->basePath() . '/style/menu.css','screen')
+                        ; ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            ->prependFile($this->basePath() . '/lib/jquery-1.9.0.min.js')
+            ->prependFile($this->basePath() . '/lib/jquery-ui-1.10.0.custom.min.js')
+            ->prependFile($this->basePath() . '/lib/jquery-ui-timepicker-addon.js')
+            ->prependFile($this->basePath() . '/lib/jquery.strtotime.js')
+            ->prependFile($this->basePath() . '/lib/jquery.localisation.min.js')
+            ->prependFile($this->basePath() . '/lib/jquery.liveSearch.js')
+            ->prependFile($this->basePath() . '/lib/func.js')
+            ->prependFile($this->basePath() . '/lib/dateformat.js')
+            ->prependFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+            ->prependFile($this->basePath() . '/js/html5shiv.js',   'text/javascript', array('conditional' => 'lt IE 9',))
+        ; ?>
+
+        <?php
+        /*if (DEF_LANG!='') {
+        echo '<script type="text/javascript" src="'.DIR_WEBROOT.'/lib/development-bundle/ui/i18n/jquery.ui.datepicker-'.DEF_LANG.'.js"></script>';
+        //echo '<script type="text/javascript" src="'.DIR_WEBROOT.'/lib/development-bundle/ui/i18n/jquery.ui.timepicker-'.DEF_LANG.'.js"></script>';
+        echo '<script type="text/javascript" src="'.DIR_WEBROOT.'/lib/development-bundle/ui/i18n/jquery.ui.timepicker-addon-'.DEF_LANG.'.js"></script>';
+        }*/
+        ?>
+    </head>
+    <body id="id_body">
+        <div id="div_header">
+            <a href="index.php" style="float:left">Home</a>
+            <a href="index.php" style="float:left">Help</a>
+            <a href="index.php?f_logout=exit" style="float:right">Logout</a>
+        </div>
+        <div id="div_menu">
+            <h1>CGRAPHZ</h1>
+            <?php echo $this->navigation('navigation')->menu(); ?>
+        </div>
+        <div id="content">
+            <?php echo $this->content; ?>
+        </div>
+
+        <div id="mask" style="display: none;"></div>
+        <div id="popup" style="display: none;"></div>
+        <?php echo $this->inlineScript() ?>
+    </body>
+</html>

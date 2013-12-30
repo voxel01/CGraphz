@@ -1,0 +1,26 @@
+<h1>CGRAPHZ</h1>
+
+    <div><?php echo $this->message;?></div>
+<br />
+<img class="img_menu" height="64" width="64" style="float:left" src="img/auth.png" />
+<br />
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url());
+$form->setAttribute('method', 'post');
+$form->setAttribute('id', 'f_form_auth');
+
+$form->prepare();
+
+echo $this->form()->openTag($form);?>
+
+<?php echo $this->formRow($form->get('f_user'));?><br />
+<?php echo $this->formRow($form->get('f_passwd'));?><br />
+
+<?php
+echo $this->formHidden($form->get('csrf'));
+echo $this->formElement($form->get('f_submit_auth'));
+
+echo $this->form()->closeTag();
+?>

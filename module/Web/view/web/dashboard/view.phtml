@@ -1,0 +1,73 @@
+<div id="div_menu_project">
+<?php foreach($this->projects as $p) {
+    ?>
+    <span><a href="<?php echo $this->url('dashboard-view',array('project'=>$p->id_config_project)); ?>"><?php echo $p->project;?></a></span>
+    <?php
+}
+    ?>
+    <div id="f_form_find_server">
+    <label for="f_find_server">Search:&nbsp;<input type="text" id="f_find_server" name="f_find_server" /></label>
+    </div>
+</div>
+<?php
+if ($this->project) {
+    ?>
+    <div id="div_menu_project_server">
+        <?php
+        foreach($this->project->getServer() as $s) {
+            ?>
+            <span><a  style="<?php if($s == $this->server) {?>font-weight: bold;<?php } ?>"  href="<?php echo $this->url('dashboard-view',array('project'=>$this->project->id_config_project,'server'=>$s->id_config_server)); ?>"><?php echo $s->server_name;?></a></span>
+            <?php
+        }
+        ?>
+        <div class="spacer">&nbsp;</div>
+    </div>
+    <?php
+}
+?>
+
+<?php if($this->server) {
+    echo '<h1>'.$this->server->server_name."</h1>\n";
+}?>
+<?php if($this->plugins) {
+    //var_dump($this->plugins);return;
+    foreach($this->plugins as $pluginName => $plugins)
+    {
+        echo "<h2>$pluginName</h2>\n";
+        foreach($plugins as $plugin)
+        {
+
+            echo '<img class="imggraph" alt="rrd" src="'.
+                $this->url('graph-view',
+                    array_merge(
+                        array(
+                            'host'=>$this->server->server_name,
+                            'PluginC'=>'.'
+                        ),
+                        $plugin->getUrlParams()
+                    )
+                ).'" />'."\n";
+
+            if ($time_range!='') {
+                //echo '<img class="imggraph" alt="rrd" src="'.$this->url('graph',array('host'=>$this->server->server_name,'plugin'=>$plugin->plugin)).'?p='.$p.'&amp;pc='.$pc.'&amp;pi='.$pi.'&amp;t='.$t.'&amp;tc='.$tc.'&amp;ti='.$ti.'&amp;s='.$time_range.'" />'."\n";
+            } else {
+                //echo '<img class="imggraph" alt="rrd" src="'.DIR_WEBROOT.'/graph.php?h='.$this->server->server_name.'&amp;p='.$p.'&amp;pc='.$pc.'&amp;pi='.$pi.'&amp;t='.$t.'&amp;tc='.$tc.'&amp;ti='.$ti.'&amp;s='.$time_start.'&amp;e='.$time_end.'" />'."\n";
+            }
+            if (isset($time_start) && isset($time_end)) {
+               // echo '<img class="imgzoom" style="cursor:pointer" onclick="Show_Popup($(this).prev(\'img\').attr(\'src\').split(\'?\')[1],\'\',\''.$time_start.'\',\''.$time_end.'\')" src="img/zoom.png" title="Zoom" alt="=O" />'."\n";
+            } else {
+               // echo '<img class="imgzoom" style="cursor:pointer" onclick="Show_Popup($(this).prev(\'img\').attr(\'src\').split(\'?\')[1],\''.$time_range.'\',\'\',\'\')" src="img/zoom.png" title="Zoom" alt="=O" />'."\n";
+            }
+        }
+    }
+
+}?>
+
+<pre><?php
+    var_dump($this->plugins);
+/*
+    var_dump($this->project);
+    echo "\n";
+    var_dump($this->server);
+    */ ?>
+    </pre>

@@ -17,8 +17,111 @@ return array(
     'navigation' => array(
         'default' => array(
             array(
-                'label' => 'Home',
-                'route' => 'home',
+                'label' => 'Performance Analysis',
+                'route' => 'dashboard-view',
+                'pages' => array(
+                    array(
+                        'label' => 'Dashboard',
+                        'route' => 'dashboard-view',
+                        'resource' => 'mvc:dashboard-view',
+                    ),
+                    array(
+                        'label' => 'Dynamic Dashboard',
+                        'route' => 'dashboard-view',
+                        'resource' => 'mvc:dashboard-view',
+                    ),
+                ),
+            ),
+            array(
+                'label' => 'Small Admin',
+                'route' => 'dashboard-view',
+                'pages' => array(
+                    array(
+                        'label' => 'My Account',
+                        'route' => 'dashboard-view',
+                        'resource' => 'mvc:dashboard-view',
+                    ),
+                    array(
+                        'label' => 'My Groups',
+                        'route' => 'dashboard-view',
+                        'resource' => 'mvc:dashboard-view',
+                    ),
+                    array(
+                        'label' => 'New User',
+                        'route' => 'dashboard-view',
+                        'resource' => 'mvc:dashboard-view',
+                    ),
+                    array(
+                        'label' => 'My Dynamic Dashboards',
+                        'route' => 'dashboard-view',
+                        'resource' => 'mvc:dashboard-view',
+                    ),
+                ),
+            ),
+                array(
+                    'label' => 'Administration',
+                    'route' => 'dashboard-view',
+                    'pages' => array(
+                        array(
+                            'label' => 'Permissions',
+                            'route' => 'dashboard-view',
+                            'resource' => 'mvc:dashboard-view',
+                            'pages' => array(
+                                array(
+                                    'label' => 'Modules',
+                                    'route' => 'dashboard-view',
+                                    'resource' => 'mvc:dashboard-view',
+                                ),
+                                array(
+                                    'label' => 'Users',
+                                    'route' => 'dashboard-view',
+                                    'resource' => 'mvc:dashboard-view',
+                                ),
+                                array(
+                                    'label' => 'Groups',
+                                    'route' => 'dashboard-view',
+                                    'resource' => 'mvc:dashboard-view',
+                                ),
+                            ),
+                        ),
+                        array(
+                            'label' => 'Settings',
+                            'route' => 'dashboard-view',
+                            'resource' => 'mvc:dashboard-view',
+                            'pages' => array(
+                                array(
+                                    'label' => 'Servers',
+                                    'route' => 'dashboard-view',
+                                    'resource' => 'mvc:dashboard-view',
+                                ),
+                                array(
+                                    'label' => 'Projects',
+                                    'route' => 'dashboard-view',
+                                    'resource' => 'mvc:dashboard-view',
+                                ),
+                                array(
+                                    'label' => 'Filters',
+                                    'route' => 'dashboard-view',
+                                    'resource' => 'mvc:dashboard-view',
+                                ),
+                                array(
+                                    'label' => 'Dynamic Dashboards',
+                                    'route' => 'dashboard-view',
+                                    'resource' => 'mvc:dashboard-view',
+                                ),
+                                array(
+                                    'label' => 'Roles',
+                                    'route' => 'dashboard-view',
+                                    'resource' => 'mvc:dashboard-view',
+                                ),
+                                array(
+                                    'label' => 'Environments',
+                                    'route' => 'dashboard-view',
+                                    'resource' => 'mvc:dashboard-view',
+                                ),
+                            ),
+                    ),
+                ),
             ),
         ),
     ),

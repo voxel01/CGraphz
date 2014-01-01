@@ -34,12 +34,5 @@ class Login extends Form
         $csrf = new Element\Csrf('csrf');
         $this->add($csrf);
 
-        /*$this->addElement(
-            'text', 'username', array(
-            'label' => 'Username:',
-            'required' => true,
-            'filters'    => array('StringTrim'),
-        ));*/
-
     }
 }

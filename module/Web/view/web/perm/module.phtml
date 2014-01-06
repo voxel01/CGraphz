@@ -1,0 +1,110 @@
+<h1><?php echo $this->translate('Manage modules');?></h1>
+<div class="spacer">&nbsp;</div>
+
+<div class="spacer">&nbsp;</div>
+<table border="0" cellpadding="0" cellspacing="0" id="table_module" class="table_admin">
+    <thead>
+    <tr>
+        <th><?php echo $this->translate('Module');?></th>
+        <th><?php echo $this->translate('Component');?></th>
+        <th><?php echo $this->translate('Menu name');?></th>
+        <th><?php echo $this->translate('Menu order');?></th>
+    </tr>
+    </thead>
+    <tbody>
+<?php
+foreach($this->modules as $module)
+{
+    ?>
+	<tr>
+		<td><a href="<?php echo $this->url('perm-module',array('id_perm_module'=>$module->id_perm_module));?>"><?php echo $module->module;?></a></td>
+		<td><a href="<?php echo $this->url('perm-module',array('id_perm_module'=>$module->id_perm_module));?>"><?php echo $module->component;?></a></td>
+		<td><a href="<?php echo $this->url('perm-module',array('id_perm_module'=>$module->id_perm_module));?>"><?php echo $module->menu_name;?></a></td>
+		<td><a href="<?php echo $this->url('perm-module',array('id_perm_module'=>$module->id_perm_module));?>"><?php echo $module->menu_order;?></a></td>
+	</tr>
+    <?php
+}
+?>
+    </tbody>
+</table>
+<div class="spacer">&nbsp;</div>
+<div class="spacer">&nbsp;</div>
+
+<fieldset>
+    <?php if($this->module) { echo "<legend>".$this->module->module." ".$this->module->component."</legend>"; } ?>
+    <fieldset>
+        <legend><?php if($this->module) { echo "Edit"; } else { echo "Add";} ?></legend>
+<?php
+    $form = $this->form;
+    $form->setAttribute('action', $this->url('perm-module',array('id_perm_module'=>$this->module->id_perm_module)));
+    $form->setAttribute('method', 'post');
+    $form->setAttribute('id', 'f_form_auth');
+    $form->prepare();
+
+    echo $this->form()->openTag($form);?>
+
+
+    <?php echo $this->formRow($form->get('module'));?><br />
+    <?php echo $this->formRow($form->get('component'));?><br />
+    <?php echo $this->formRow($form->get('menu_name'));?><br />
+    <?php echo $this->formRow($form->get('menu_order'));?><br />
+
+    <?php
+    echo $this->formHidden($form->get('csrf'));
+    echo $this->formHidden($form->get('id_perm_module'));
+    echo $this->formElement($form->get('submit')).' ';
+    echo $this->formElement($form->get('delete'));
+
+    echo $this->form()->closeTag();
+    ?>
+    </fieldset>
+    <?php if($this->module) { ?>
+    <fieldset>
+        <legend><?php echo $this->translate('Access authorization');?></legend>
+        <table border="0" cellpadding="0" cellspacing="0" id="table_module_group" class="table_admin">
+            <thead>
+            <tr>
+                <th><?php echo $this->translate('Group');?></th>
+            </tr>
+            </thead>
+            <tbody>
+        <?php foreach($this->groups['allowed'] as $group) { ?>
+            <tr>
+                <td><a href="<?php echo $this->url('perm-module',array('id_perm_module'=>$this->module->id_perm_module));?>?deleteGroup=<?php echo $group->id_auth_group;?>"><?php echo $group->group_description;?></a></td>
+            </tr>
+
+        <?php } ?>
+            </tbody>
+        </table>
+        <div class="spacer">&nbsp;</div>
+        <div class="spacer">&nbsp;</div>
+        <strong><?php echo $this->translate('Add');?></strong>
+        <form name="f_form_module_group" method="post" action="">
+            <input type="hidden" name="f_id_perm_module" id="f_id_perm_module" value="6" />
+            <label for="f_id_auth_group"><?php echo $this->translate('Group');?></label>
+            <select name="f_id_auth_group" id="f_id_auth_group">
+                <?php foreach($this->groups['available'] as $group) { ?>
+                <option value="<?php echo $group->id_auth_group;?>"><?php echo $group->group_description;?></option>
+                <?php } ?>
+            </select>
+            <input type="submit" name="f_submit_module_group" id="f_submit_module_group" value="Submit" />
+        </form>
+    </fieldset>
+    <?php } ?>
+</fieldset>
+
+<script language="javascript">
+    $(function(){
+        $.localise('ui.multiselect', {language: 'en',  path: '<?php echo $this->basepath();?>/lib/multiselect/locale/'});
+        $(".multiselect").multiselect();
+    });
+
+    $(document).ready(function() {
+        $('.table_admin').dataTable( {
+            "bStateSave": true,
+            "oLanguage": {
+                "sUrl": "/lib/dataTables/locale/ui.dataTables-en.js"
+            }
+        });
+    });
+</script>

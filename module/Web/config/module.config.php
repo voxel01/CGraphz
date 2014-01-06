@@ -69,8 +69,8 @@ return array(
                             'pages' => array(
                                 array(
                                     'label' => 'Modules',
-                                    'route' => 'dashboard-view',
-                                    'resource' => 'mvc:dashboard-view',
+                                    'route' => 'perm-module',
+                                    'resource' => 'mvc:perm-module',
                                 ),
                                 array(
                                     'label' => 'Users',
@@ -79,8 +79,8 @@ return array(
                                 ),
                                 array(
                                     'label' => 'Groups',
-                                    'route' => 'dashboard-view',
-                                    'resource' => 'mvc:dashboard-view',
+                                    'route' => 'perm-group',
+                                    'resource' => 'mvc:auth-group',
                                 ),
                             ),
                         ),
@@ -156,6 +156,36 @@ return array(
                         'action' => 'view',
                         'project' => '0',
                         'server' => '0',
+                    ),
+                ),
+            ),
+            'perm-module' => array(
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => array(
+                    'route' => '/perm/module[/:id_perm_module]',
+                    'constraints' => array(
+                        'id_perm_module' => '[0-9]+',
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Web\Controller\Perm',
+                        'action' => 'module',
+                        'id_perm_module' => '0',
+                    ),
+                ),
+            ),
+            'perm-group' => array(
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => array(
+                    'route' => '/perm/group[/:id_auth_group[/:function]]',
+                    'constraints' => array(
+                        'id_auth_group' => '[0-9]+',
+                        'function' => '(show|edit|add|userAdd|userEdit|projectAdd|projectEdit|pluginFilterAdd|pluginFilterEdit|moduleAdd|moduleEdit)',
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Web\Controller\Perm',
+                        'action' => 'group',
+                        'id_auth_group' => '0',
+                        'function' => 'show',
                     ),
                 ),
             ),
@@ -255,6 +285,8 @@ return array(
                 $user->setDbAdapter($sm->get('Zend\Db\Adapter\Adapter'));
                 return $user;
             },
+
+
         ),
     ),
     'translator' => array(
@@ -272,6 +304,7 @@ return array(
             'Web\Controller\Index' => 'Web\Controller\IndexController',
             'Web\Controller\Auth' => 'Web\Controller\AuthController',
             'Web\Controller\Dashboard' => 'Web\Controller\DashboardController',
+            'Web\Controller\Perm' => 'Web\Controller\PermController',
         ),
     ),
     'view_manager' => array(

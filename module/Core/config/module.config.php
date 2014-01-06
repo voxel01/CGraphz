@@ -7,6 +7,10 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+
+use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\TableGateway\TableGateway;
+
 return array(
     'router' => array(
         'routes' => array(
@@ -22,6 +26,28 @@ return array(
         ),
         'factories' => array(
 
+            'Core\Model\ModuleTable' =>  function($sm) {
+                $tableGateway = $sm->get('ModuleTableGateway');
+                $table = new \Core\Model\ModuleTable($tableGateway);
+                return $table;
+            },
+            'ModuleTableGateway' => function ($sm) {
+                $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                $resultSetPrototype = new ResultSet();
+                $resultSetPrototype->setArrayObjectPrototype(new \Core\Model\Module());
+                return new TableGateway('perm_module', $dbAdapter, null, $resultSetPrototype);
+            },
+            'Core\Model\GroupTable' =>  function($sm) {
+                $tableGateway = $sm->get('GroupTableGateway');
+                $table = new \Core\Model\GroupTable($tableGateway);
+                return $table;
+            },
+            'GroupTableGateway' => function ($sm) {
+                $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                $resultSetPrototype = new ResultSet();
+                $resultSetPrototype->setArrayObjectPrototype(new \Core\Model\Group());
+                return new TableGateway('auth_group', $dbAdapter, null, $resultSetPrototype);
+            },
         )
     ),
     'translator' => array(

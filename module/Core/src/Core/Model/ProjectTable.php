@@ -6,8 +6,11 @@ use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
-class ModuleTable
+class ProjectTable
 {
+    /**
+     * @var \Zend\Db\TableGateway\TableGateway
+     */
     protected $tableGateway;
 
     public function __construct(TableGateway $tableGateway)
@@ -21,10 +24,10 @@ class ModuleTable
         return $resultSet;
     }
 
-    public function getModule($id)
+    public function getProject($id)
     {
         $id  = (int) $id;
-        $rowset = $this->tableGateway->select(array('id_perm_module' => $id));
+        $rowset = $this->tableGateway->select(array('id_config_project' => $id));
         $row = $rowset->current();
         if (!$row) {
             throw new \Exception("Could not find row $id");
@@ -32,36 +35,39 @@ class ModuleTable
         return $row;
     }
 
-    public function saveModule(Module $module)
+    public function saveProject(Project $project)
     {
-        $data = get_object_vars($module);
-        unset($data['id_perm_module']);
+        $data = get_object_vars($project);
+        unset($data['id_config_project']);
 
-        $id = (int)$module->id_perm_module;
+        $id = (int)$project->id_config_project;
         if ($id == 0) {
             $this->tableGateway->insert($data);
+            return $this->tableGateway->getLastInsertValue();
         } else {
-            if ($this->getModule($id)) {
-                $this->tableGateway->update($data, array('id_perm_module' => $id));
+            if ($this->getProject($id)) {
+                $this->tableGateway->update($data, array('id_config_project' => $id));
+                return $id;
             } else {
                 throw new \Exception('Module id does not exist');
             }
         }
     }
 
-    public function deleteModule($id)
+    public function deleteProject($id)
     {
-        $this->tableGateway->delete(array('id_perm_module' => $id));
+        $this->dropProjectFromGroup(null,$id);
+        $this->tableGateway->delete(array('id_config_project' => $id));
     }
 
-    public function getModulesToGroup(Group $group)
+    public function getProjectsToGroup(Group $group)
     {
         $sql = $this->tableGateway->getSql();
 
         $select = $sql->select();
-        $expression = new Expression('perm_module_group.id_perm_module = '.$this->tableGateway->getTable().'.id_perm_module AND (id_auth_group='.intval($group->id_auth_group).')');
+        $expression = new Expression('perm_project_group.id_config_project = '.$this->tableGateway->getTable().'.id_config_project AND (id_auth_group='.intval($group->id_auth_group).')');
         $select->join(
-            'perm_module_group',$expression,
+            'perm_project_group',$expression,
             array('id_auth_group'),
             Select::JOIN_LEFT.' '.Select::JOIN_OUTER
         );
@@ -80,27 +86,27 @@ class ModuleTable
         return $projects;
     }
 
-    public function dropModuleFromGroup(Group $group=null,$projectId)
+    public function dropProjectFromGroup(Group $group=null,$projectId)
     {
         $where = new \Zend\Db\Sql\Where();
-        $where->addPredicate(new Operator('id_perm_module',Operator::OPERATOR_EQUAL_TO,$projectId));
+        $where->addPredicate(new Operator('id_config_project',Operator::OPERATOR_EQUAL_TO,$projectId));
         if($group)
         {
             $where->andPredicate(new Operator('id_auth_group',Operator::OPERATOR_EQUAL_TO,$group->id_auth_group));
         }
 
         $sql = new \Zend\Db\Sql\Sql($this->tableGateway->getAdapter());
-        $del = $sql->delete('perm_module_group')->where($where);
+        $del = $sql->delete('perm_project_group')->where($where);
         $sql->prepareStatementForSqlObject($del)->execute();
     }
 
-    public function addModuleToGroup(Group $group, $projectId)
+    public function addProjectToGroup(Group $group, $projectId)
     {
         $sql = new \Zend\Db\Sql\Sql($this->tableGateway->getAdapter());
-        $ins = $sql->insert('perm_module_group');
+        $ins = $sql->insert('perm_project_group');
         $ins->values(array(
             'id_auth_group'=>$group->id_auth_group,
-            'id_perm_module'=>$projectId
+            'id_config_project'=>$projectId
         ));
         $sql->prepareStatementForSqlObject($ins)->execute();
     }

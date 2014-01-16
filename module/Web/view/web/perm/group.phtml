@@ -1,0 +1,119 @@
+<h1><?php echo $this->translate('Manage groups');?></h1>
+
+<table border="0" cellpadding="0" cellspacing="0" id="group" class="table_admin">
+    <thead>
+    <tr>
+        <th><?php echo $this->translate('Group');?></th>
+        <th><?php echo $this->translate('Description');?></th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach($this->groups as $gr) { ?>
+    <tr>
+        <td><a href="<?php echo $this->url('perm-group',array('function'=>'edit','id_auth_group'=>$gr->id_auth_group));?>"><?php echo $gr->group;?></a></td>
+        <td><?php echo $gr->group_description;?></td>
+    </tr>
+    <?php } ?>
+    </tbody>
+</table>
+<div class="spacer">&nbsp;</div>
+<div class="spacer">&nbsp;</div>
+
+<fieldset>
+    <?php if($this->group) { echo "<legend>".$this->group->group."</legend>"; } ?>
+    <fieldset>
+        <legend><?php echo $this->translate((!$this->group)?'Add':'Edit');?></legend>
+        <?php
+        $form = $this->form;
+        $data = array();
+        if($this->group)
+        {
+            $data['id_auth_group'] = $this->group->id_auth_group;
+            $data['function'] = 'edit';
+        }
+        else {
+            $data['function'] = 'add';
+        }
+
+        $form->setAttribute('action', $this->url('perm-group',$data));
+        $form->setAttribute('method', 'post');
+        $form->setAttribute('id', 'f_form_user');
+        $form->prepare();
+
+        echo $this->form()->openTag($form);?>
+        <?php echo $this->formRow($form->get('group'));?><br />
+        <?php echo $this->formRow($form->get('group_description'));?><br />
+        <?php
+        echo $this->formHidden($form->get('csrf'));
+        echo $this->formHidden($form->get('id_auth_group'));
+        echo $this->formElement($form->get('submit')).' ';
+        if($this->group) echo $this->formElement($form->get('delete'));
+
+        echo $this->form()->closeTag();
+        ?>
+    </fieldset>
+
+    <?php
+    if($this->group)
+    {
+        echo $this->partial('web/partial/edit.phtml',array(
+            'title' => 'Users',
+            'tableHeaders' => array('user'=>'User','email'=>'Email','nom' => 'Surname','prenom' => 'Name'),
+            'valuesActive' => $this->users['member'],
+            'valuesAvailable' => $this->users['available'],
+            'idField' => 'id_auth_user',
+            'descField' => 'user',
+            'type' => 'user',
+            'url' => $this->url('perm-group',array('function'=>'user','id_auth_group'=>$gr->id_auth_group)),
+        ));
+        echo $this->partial('web/partial/edit.phtml',array(
+            'title' => 'Projects',
+            'tableHeaders' => array('project'=>'Project','project_desciption'=>'Description'),
+            'valuesActive' => $this->projects['member'],
+            'valuesAvailable' => $this->projects['available'],
+            'idField' => 'id_config_project',
+            'descField' => 'project',
+            'type' => 'project',
+            'url' => $this->url('perm-group',array('function'=>'project','id_auth_group'=>$gr->id_auth_group)),
+        ));
+
+        echo $this->partial('web/partial/edit.phtml',array(
+            'title' => 'Plugin filters',
+            'tableHeaders' => array('plugin_filter_desc'=>'Filter','plugin_order'=>'Order'),
+            'valuesActive' => $this->filters['member'],
+            'valuesAvailable' => $this->filters['available'],
+            'idField' => 'id_config_plugin_filter',
+            'descField' => 'plugin_filter_desc',
+            'type' => 'filter',
+            'url' => $this->url('perm-group',array('function'=>'filter','id_auth_group'=>$gr->id_auth_group)),
+        ));
+
+        echo $this->partial('web/partial/edit.phtml',array(
+            'title' => 'Access Authorization',
+            'tableHeaders' => array('module'=>'Module','component'=>'Component','menu_name' => 'Menu Name'),
+            'valuesActive' => $this->modules['member'],
+            'valuesAvailable' => $this->modules['available'],
+            'idField' => 'id_perm_module',
+            'descField' => 'menu_name',
+            'type' => 'module',
+            'url' => $this->url('perm-group',array('function'=>'module','id_auth_group'=>$gr->id_auth_group)),
+        ));
+    }
+?>
+</fieldset>
+
+        <script language="javascript">
+    $(function(){
+        $.localise('ui.multiselect', {language: 'en',  path: '<?php echo $this->basepath();?>/lib/multiselect/locale/'});
+        $(".multiselect").multiselect();
+    });
+
+    $(document).ready(function() {
+        $('.table_admin').dataTable( {
+            "bStateSave": true,
+            "oLanguage": {
+                "sUrl": "<?php echo $this->basepath();?>/lib/dataTables/locale/ui.dataTables-en.js"
+            }
+        });
+    });
+</script>

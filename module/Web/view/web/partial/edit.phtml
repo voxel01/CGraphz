@@ -1,0 +1,37 @@
+<fieldset>
+    <legend><?php echo $this->translate($this->title);?></legend>
+    <table border="0" cellpadding="0" cellspacing="0" id="table_<?php echo $this->type;?>" class="table_admin">
+        <thead>
+        <tr>
+            <?php foreach($this->tableHeaders as $th) { ?>
+            <th><?php echo $this->translate($th);?></th>
+            <?php } ?>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach($this->valuesActive as $v) { ?>
+        <tr>
+
+            <?php foreach($this->tableHeaders as $key => $name) { ?>
+                <td><a href="<?php echo $this->url;?>?delete<?php echo $this->type;?>=<?php echo $v->{$this->idField}?>"><?php echo $v->$key;?></a></td>
+            <?php } ?>
+        </tr>
+            <?php }
+        unset($v);
+        ?>
+        </tbody>
+    </table>
+    <div class="spacer">&nbsp;</div>
+    <div class="spacer">&nbsp;</div>
+    <strong><?php echo $this->translate('Add');?></strong>
+    <form name="f_form_<?php echo $this->type;?>" method="post" action="<?php echo $this->url;?>">
+        <input type="hidden" name="f_id_<?php echo $this->type;?>" id="f_id_<?php echo $this->type;?>" value="6" />
+        <label for="f_id_<?php echo $this->type;?>"><?php echo $this->translate(ucfirst($this->type));?></label>
+        <select name="f_id_<?php echo $this->type;?>" id="f_id_<?php echo $this->type;?>">
+            <?php foreach($this->valuesAvailable as $v) { ?>
+                <option value="<?php echo $v->{$this->idField};?>"><?php echo $v->{$this->descField};?></option>
+            <?php } ?>
+        </select>
+        <input type="submit" name="f_submit_<?php echo $this->type;?>" id="f_submit_<?php echo $this->type;?>" value="Submit" />
+    </form>
+</fieldset>

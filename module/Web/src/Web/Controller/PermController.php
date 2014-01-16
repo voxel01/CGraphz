@@ -92,19 +92,23 @@ class PermController extends AbstractActionController
         if($groupId)
         {
             $group = $groupTable->getGroup($groupId);
+            $form->setData(get_object_vars($group));
+            $userTable  = $this->getServiceLocator()->get('Core\Model\UserTable');
+            $projectTable  = $this->getServiceLocator()->get('Core\Model\ProjectTable');
+            $filterTable  = $this->getServiceLocator()->get('Core\Model\FilterTable');
+            $moduleTable  = $this->getServiceLocator()->get('Core\Model\ModuleTable');
         }
         if($function == 'edit')
         {
-            $form->setData(get_object_vars($group));
             if($request->isPost())
             {
                 $form->setData($request->getPost()->toArray());
                 if($form->isValid())
                 {
-                    if($this->params('delete',false))
+                    if($this->params()->fromPost('delete',false))
                     {
                         $groupTable->deleteGroup($groupId);
-                        unset($return['module']);
+                        return $this->redirect()->toRoute('perm-group',array('function'=>'show'));
                     }
                     else
                     {
@@ -119,26 +123,74 @@ class PermController extends AbstractActionController
         {
             if($request->isPost())
             {
-                $form->setData(array_merge($request->getPost()->toArray(),array('id_auth_group' => "0")));
-                var_dump($form);
-                echo "<br>\n";
-                echo "<br>\n";
-                var_dump($form->isValid());exit();
+                $form->remove('id_auth_group');
+                $data = $request->getPost()->toArray();
+                unset($data['id_auth_group']);
+                $form->setData($data);
                 if($form->isValid())
                 {
                     $m = new \Core\Model\Group();
                     $m->exchangeArray($form->getData());
                     $groupId = $groupTable->saveGroup($m);
-                    $this->forward('perm-group',array('function'=>'edit','id_auth_group'=>$groupId));
+                    return $this->redirect()->toRoute('perm-group',array('function'=>'edit','id_auth_group'=>$groupId));
                 }
             }
         }
+        elseif($function == 'user')
+        {
+            $this->saveEdit($request,'user',$group);
+        }
+        elseif($function == 'project')
+        {
+            $this->saveEdit($request,'project',$group);
+        }
+        elseif($function == 'filter')
+        {
+            $this->saveEdit($request,'filter',$group);
+        }
+        elseif($function == 'module')
+        {
+            $this->saveEdit($request,'module',$group);
+        }
 
-
-        if($group) $return['group'] = $group;
+        if($group){
+            $return['group'] = $group;
+            $return['users'] = $userTable->getUsersToGroup($group);
+            $return['projects'] = $projectTable->getProjectsToGroup($group);
+            $return['filters'] = $filterTable->getFiltersToGroup($group);
+            $return['modules'] = $moduleTable->getModulesToGroup($group);
+        }
         $return['groups'] = $groupTable->fetchAll();
         $return['form'] = $form;
 
         return new ViewModel($return);
+    }
+
+    protected function saveEdit($request, $type, $group)
+    {
+        $base = array_pop(explode('\\',get_class($group)));
+        if($request->isPost()) //Maybe add something
+        {
+            if($this->params()->fromPost('f_submit_'.$type,false))
+            {
+                $table  = $this->getServiceLocator()->get('Core\Model\\'.ucfirst($type).'Table');
+                $add = intval($this->params()->fromPost('f_id_'.$type,0));
+                if($add)
+                {
+                    $func = 'add'.ucfirst($type).'to'.$base;
+                    $table->$func($group, $add);
+                }
+            }
+        }
+        else
+        {
+            $table  = $this->getServiceLocator()->get('Core\Model\\'.ucfirst($type).'Table');
+            $drop = intval($this->params()->fromQuery('delete'.$type,false));
+            if($drop)
+            {
+                $func = 'drop'.ucfirst($type).'from'.$base;
+                $table->$func($group, $drop);
+            }
+        }
     }
 }

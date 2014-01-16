@@ -6,8 +6,11 @@ use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
-class ModuleTable
+class FilterTable
 {
+    /**
+     * @var \Zend\Db\TableGateway\TableGateway
+     */
     protected $tableGateway;
 
     public function __construct(TableGateway $tableGateway)
@@ -21,10 +24,10 @@ class ModuleTable
         return $resultSet;
     }
 
-    public function getModule($id)
+    public function getFilter($id)
     {
         $id  = (int) $id;
-        $rowset = $this->tableGateway->select(array('id_perm_module' => $id));
+        $rowset = $this->tableGateway->select(array('id_config_plugin_filter' => $id));
         $row = $rowset->current();
         if (!$row) {
             throw new \Exception("Could not find row $id");
@@ -32,75 +35,78 @@ class ModuleTable
         return $row;
     }
 
-    public function saveModule(Module $module)
+    public function saveFilter(Filter $filter)
     {
-        $data = get_object_vars($module);
-        unset($data['id_perm_module']);
+        $data = get_object_vars($filter);
+        unset($data['id_config_plugin_filter']);
 
-        $id = (int)$module->id_perm_module;
+        $id = (int)$filter->id_config_plugin_filter;
         if ($id == 0) {
             $this->tableGateway->insert($data);
+            return $this->tableGateway->getLastInsertValue();
         } else {
-            if ($this->getModule($id)) {
-                $this->tableGateway->update($data, array('id_perm_module' => $id));
+            if ($this->getFilter($id)) {
+                $this->tableGateway->update($data, array('id_config_plugin_filter' => $id));
+                return $id;
             } else {
                 throw new \Exception('Module id does not exist');
             }
         }
     }
 
-    public function deleteModule($id)
+    public function deleteFilter($id)
     {
-        $this->tableGateway->delete(array('id_perm_module' => $id));
+        $this->dropFilterFromGroup(null,$id);
+        $this->tableGateway->delete(array('id_config_plugin_filter' => $id));
     }
 
-    public function getModulesToGroup(Group $group)
+    public function getFiltersToGroup(Group $group)
     {
         $sql = $this->tableGateway->getSql();
 
         $select = $sql->select();
-        $expression = new Expression('perm_module_group.id_perm_module = '.$this->tableGateway->getTable().'.id_perm_module AND (id_auth_group='.intval($group->id_auth_group).')');
+        $expression = new Expression('config_plugin_filter_group.id_config_plugin_filter = '.$this->tableGateway->getTable().'.id_config_plugin_filter AND (id_auth_group='.intval($group->id_auth_group).')');
         $select->join(
-            'perm_module_group',$expression,
+            'config_plugin_filter_group',$expression,
             array('id_auth_group'),
             Select::JOIN_LEFT.' '.Select::JOIN_OUTER
         );
         //echo $select->getSqlString();exit();
 
         $result = $sql->prepareStatementForSqlObject($select)->execute();
-        $projects = array('member'=>array(),'available'=>array());
+        $filters = array('member'=>array(),'available'=>array());
         $proto = $this->tableGateway->getResultSetPrototype()->getArrayObjectPrototype();
         foreach($result as $row)
         {
             $ins = ($row['id_auth_group'])?'member':'available';
             $g = clone $proto;
             $g->exchangeArray($row);
-            $projects[$ins][] = $g;
+            $filters[$ins][] = $g;
         }
-        return $projects;
+        return $filters;
     }
 
-    public function dropModuleFromGroup(Group $group=null,$projectId)
+    public function dropFilterFromGroup(Group $group=null,$filterId)
     {
         $where = new \Zend\Db\Sql\Where();
-        $where->addPredicate(new Operator('id_perm_module',Operator::OPERATOR_EQUAL_TO,$projectId));
+        $where->addPredicate(new Operator('id_config_plugin_filter',Operator::OPERATOR_EQUAL_TO,$filterId));
         if($group)
         {
             $where->andPredicate(new Operator('id_auth_group',Operator::OPERATOR_EQUAL_TO,$group->id_auth_group));
         }
 
         $sql = new \Zend\Db\Sql\Sql($this->tableGateway->getAdapter());
-        $del = $sql->delete('perm_module_group')->where($where);
+        $del = $sql->delete('config_plugin_filter_group')->where($where);
         $sql->prepareStatementForSqlObject($del)->execute();
     }
 
-    public function addModuleToGroup(Group $group, $projectId)
+    public function addFilterToGroup(Group $group, $filterId)
     {
         $sql = new \Zend\Db\Sql\Sql($this->tableGateway->getAdapter());
-        $ins = $sql->insert('perm_module_group');
+        $ins = $sql->insert('config_plugin_filter_group');
         $ins->values(array(
             'id_auth_group'=>$group->id_auth_group,
-            'id_perm_module'=>$projectId
+            'id_config_plugin_filter'=>$filterId
         ));
         $sql->prepareStatementForSqlObject($ins)->execute();
     }

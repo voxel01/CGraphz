@@ -179,7 +179,7 @@ return array(
                     'route' => '/perm/group[/:id_auth_group[/:function]]',
                     'constraints' => array(
                         'id_auth_group' => '[0-9]+',
-                        'function' => '(show|edit|add|userAdd|userEdit|projectAdd|projectEdit|pluginFilterAdd|pluginFilterEdit|moduleAdd|moduleEdit)',
+                        'function' => '(show|edit|add|user|project|filter|module)',
                     ),
                     'defaults' => array(
                         'controller' => 'Web\Controller\Perm',
@@ -265,27 +265,6 @@ return array(
                 return $authService;
             },
 
-            'Core\Model\User' => function ($sm) {
-                $user = new Core\Model\User();
-                $user->setDbAdapter($sm->get('Zend\Db\Adapter\Adapter'));
-                return $user;
-            },
-            'Core\Model\Project' => function ($sm) {
-                $p = new Core\Model\Project();
-                $p->setDbAdapter($sm->get('Zend\Db\Adapter\Adapter'));
-                return $p;
-            },
-            'Core\Model\UserIdentity' => function ($sm) {
-                $as = $sm->get('Web\Auth\Service');
-                if ($as->hasIdentity() === true) {
-                    $user = $as->getIdentity();
-                } else {
-                    $user = new Core\Model\User();
-                }
-                $user->setDbAdapter($sm->get('Zend\Db\Adapter\Adapter'));
-                return $user;
-            },
-
 
         ),
     ),
@@ -315,7 +294,6 @@ return array(
         'exception_template' => 'error/index',
         'template_map' => array(
             'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
-            'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
             'error/404' => __DIR__ . '/../view/error/404.phtml',
             'error/index' => __DIR__ . '/../view/error/index.phtml',
         ),

@@ -6,8 +6,11 @@ use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
-class ModuleTable
+class UserTable
 {
+    /**
+     * @var \Zend\Db\TableGateway\TableGateway
+     */
     protected $tableGateway;
 
     public function __construct(TableGateway $tableGateway)
@@ -21,10 +24,10 @@ class ModuleTable
         return $resultSet;
     }
 
-    public function getModule($id)
+    public function getUser($id)
     {
         $id  = (int) $id;
-        $rowset = $this->tableGateway->select(array('id_perm_module' => $id));
+        $rowset = $this->tableGateway->select(array('id_auth_user' => $id));
         $row = $rowset->current();
         if (!$row) {
             throw new \Exception("Could not find row $id");
@@ -32,75 +35,78 @@ class ModuleTable
         return $row;
     }
 
-    public function saveModule(Module $module)
+    public function saveUser(User $user)
     {
-        $data = get_object_vars($module);
-        unset($data['id_perm_module']);
+        $data = get_object_vars($user);
+        unset($data['id_auth_user']);
 
-        $id = (int)$module->id_perm_module;
+        $id = (int)$user->id_auth_user;
         if ($id == 0) {
             $this->tableGateway->insert($data);
+            return $this->tableGateway->getLastInsertValue();
         } else {
-            if ($this->getModule($id)) {
-                $this->tableGateway->update($data, array('id_perm_module' => $id));
+            if ($this->getUser($id)) {
+                $this->tableGateway->update($data, array('id_auth_user' => $id));
+                return $id;
             } else {
                 throw new \Exception('Module id does not exist');
             }
         }
     }
 
-    public function deleteModule($id)
+    public function deleteUser($id)
     {
-        $this->tableGateway->delete(array('id_perm_module' => $id));
+        $this->dropUserFromGroup(null,$id);
+        $this->tableGateway->delete(array('id_auth_user' => $id));
     }
 
-    public function getModulesToGroup(Group $group)
+    public function getUsersToGroup(Group $group)
     {
         $sql = $this->tableGateway->getSql();
 
         $select = $sql->select();
-        $expression = new Expression('perm_module_group.id_perm_module = '.$this->tableGateway->getTable().'.id_perm_module AND (id_auth_group='.intval($group->id_auth_group).')');
+        $expression = new Expression('auth_user_group.id_auth_user = '.$this->tableGateway->getTable().'.id_auth_user AND (id_auth_group='.intval($group->id_auth_group).')');
         $select->join(
-            'perm_module_group',$expression,
+            'auth_user_group',$expression,
             array('id_auth_group'),
             Select::JOIN_LEFT.' '.Select::JOIN_OUTER
         );
         //echo $select->getSqlString();exit();
 
         $result = $sql->prepareStatementForSqlObject($select)->execute();
-        $projects = array('member'=>array(),'available'=>array());
+        $users = array('member'=>array(),'available'=>array());
         $proto = $this->tableGateway->getResultSetPrototype()->getArrayObjectPrototype();
         foreach($result as $row)
         {
             $ins = ($row['id_auth_group'])?'member':'available';
             $g = clone $proto;
             $g->exchangeArray($row);
-            $projects[$ins][] = $g;
+            $users[$ins][] = $g;
         }
-        return $projects;
+        return $users;
     }
 
-    public function dropModuleFromGroup(Group $group=null,$projectId)
+    public function dropUserFromGroup(Group $group=null,$userId)
     {
         $where = new \Zend\Db\Sql\Where();
-        $where->addPredicate(new Operator('id_perm_module',Operator::OPERATOR_EQUAL_TO,$projectId));
+        $where->addPredicate(new Operator('id_auth_user',Operator::OPERATOR_EQUAL_TO,$userId));
         if($group)
         {
             $where->andPredicate(new Operator('id_auth_group',Operator::OPERATOR_EQUAL_TO,$group->id_auth_group));
         }
 
         $sql = new \Zend\Db\Sql\Sql($this->tableGateway->getAdapter());
-        $del = $sql->delete('perm_module_group')->where($where);
+        $del = $sql->delete('auth_user_group')->where($where);
         $sql->prepareStatementForSqlObject($del)->execute();
     }
 
-    public function addModuleToGroup(Group $group, $projectId)
+    public function addUserToGroup(Group $group, $userId)
     {
         $sql = new \Zend\Db\Sql\Sql($this->tableGateway->getAdapter());
-        $ins = $sql->insert('perm_module_group');
+        $ins = $sql->insert('auth_user_group');
         $ins->values(array(
             'id_auth_group'=>$group->id_auth_group,
-            'id_perm_module'=>$projectId
+            'id_auth_user'=>$userId
         ));
         $sql->prepareStatementForSqlObject($ins)->execute();
     }

@@ -28,6 +28,34 @@ Post Installation
 
 > mv /var/www/CGraphz/config/config.php.tpl /var/www/CGraphz/config/config.php
 
+Configuration of Apache
+------
+Add the following text to your apache configuration
+<VirtualHost *:80>
+ServerName "cgraphz.yourdomain.com"
+UseCanonicalName Off
+<IfModule mod_suexec.c>
+   SuexecUserGroup "apache" "apache"
+</IfModule>
+DocumentRoot "/var/www/CGraphz/public"
+
+RewriteEngine On
+
+RewriteCond %{DOCUMENT_ROOT}/$1 !-f
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-F
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^(.*)$ /index.php [L,QSA]
+
+<Directory /var/www/CGraphz/>
+        Options -Includes -ExecCGI
+        Order Deny,Allow
+        Deny from all
+        Allow from localhost
+</Directory>
+</VirtualHost>
+
 Add your first server
 -------
 1. Open your webbrowser and goto http://localhost/CGraphz

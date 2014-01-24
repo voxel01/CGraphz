@@ -6,6 +6,8 @@ use Core\Model\Plugin;
 
 abstract class AbstractGraph {
 
+    const MAX_LEGEND_LENGTH= 90;
+
     protected $datadir;
     protected $cachetime;
     protected $secondsOffset = 3600;
@@ -419,11 +421,11 @@ abstract class AbstractGraph {
 
         $lengths = array_map('strlen', $sources);
         $max_src = max($lengths);
-        $max_src = $max_src > MAX_LEGEND_LENGTH ? MAX_LEGEND_LENGTH : $max_src;
+        $max_src = $max_src > self::MAX_LEGEND_LENGTH ? self::MAX_LEGEND_LENGTH : $max_src;
 
         $lengths = array_map('strlen', $this->dataSourceNames);
         $max_ds = max($lengths);
-        $max_ds = $max_ds > MAX_LEGEND_LENGTH ? MAX_LEGEND_LENGTH : $max_ds;
+        $max_ds = $max_ds > self::MAX_LEGEND_LENGTH ? self::MAX_LEGEND_LENGTH : $max_ds;
 
         $c = 0;
         foreach ($sources as $source) {
@@ -437,7 +439,7 @@ abstract class AbstractGraph {
             //$dsname = empty($this->ds_names[$source]) ? $source : $this->ds_names[$source];
             $color = is_array($this->colors) ? (isset($this->colors[$source])?$this->colors[$source]:$this->colors[$c++]): $this->colors;
 
-            $formatedSource=sprintf('%x', crc32($sources[$i]));
+            $formatedSource=sprintf('%x', crc32($source));
             $this->rrdRenderer->addLine('avg_'.$formatedSource,$color,$this->rrdEscape(ucfirst(str_replace('_', ' ',$dsname))))
                 ->addGprint('min_'.$formatedSource,$this->rrdFormat.' Min','MIN')
                 ->addGprint('avg_'.$formatedSource,$this->rrdFormat.' Avg','AVERAGE')

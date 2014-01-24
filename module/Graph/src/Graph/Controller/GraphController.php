@@ -16,7 +16,7 @@ class GraphController extends AbstractActionController
         foreach(get_object_vars($plugin) as $key => $value)
         {
             $v = $this->params($key,'-');
-            $plugin->$key = ($v !== '-')?$v:'';
+            $plugin->$key = ($v !== '-')?base64_decode($v):'';
         }
 
         $classname = 'Graph\\Model\\Graph\\'.ucfirst($plugin->plugin);

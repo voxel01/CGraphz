@@ -15,7 +15,7 @@ class Plugin
         $return = array();
         foreach(get_object_vars($this) as $key => $val)
         {
-            $return[$key] = $val?$val:'-';
+            $return[$key] = $val?base64_encode($val):'-';
         }
         return $return;
     }

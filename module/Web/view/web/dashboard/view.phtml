@@ -1,3 +1,32 @@
+<?php
+
+$this->headLink()
+    ->prependStylesheet($this->basePath() . '/lib/css/demo_table.css','screen')
+    ->prependStylesheet($this->basePath() . '/lib/multiselect/css/common.css','screen')
+    ->prependStylesheet($this->basePath() . '/lib/multiselect/css/ui.multiselect.css','screen')
+;
+$this->headScript()
+    ->prependFile($this->basePath() . '/lib/dyn_js.php')
+    ->prependFile($this->basePath() . '/lib/jquery.dataTables.min.js')
+    ->prependFile($this->basePath() . '/lib/multiselect/js/jquery.tmpl.1.1.1.js')
+    ->prependFile($this->basePath() . '/lib/multiselect/js/ui.multiselect.js')
+;
+
+$this->headScript()
+    ->appendFile($this->basePath() . '/lib/javascriptrrd/sprintf.js')
+    ->appendFile($this->basePath() . '/lib/javascriptrrd/strftime.js')
+    ->appendFile($this->basePath() . '/lib/javascriptrrd/RrdRpn.js')
+    ->appendFile($this->basePath() . '/lib/javascriptrrd/RrdTime.js')
+    ->appendFile($this->basePath() . '/lib/javascriptrrd/RrdGraph.js')
+    ->appendFile($this->basePath() . '/lib/javascriptrrd/RrdGfxCanvas.js')
+    ->appendFile($this->basePath() . '/lib/javascriptrrd/binaryXHR.js')
+    ->appendFile($this->basePath() . '/lib/javascriptrrd/rrdFile.js')
+    ->appendFile($this->basePath() . '/lib/javascriptrrd/RrdDataFile.js')
+    ->appendFile($this->basePath() . '/lib/javascriptrrd/RrdCmdLine.js')
+;
+?>
+
+
 <div id="div_menu_project">
 <?php foreach($this->projects as $p) {
     ?>
@@ -25,8 +54,31 @@ if ($this->project) {
     <?php
 }
 ?>
-
+<div id="left_menu">
+    <div id="left_menu_show">
+        <ul>
+            <li><a href="#" onclick="refresh_graph('dashboard','3600','',''); $('#left_menu_show').hide('400'); return false">1h</a></li>
+            <li><a href="#" onclick="refresh_graph('dashboard','7200','',''); $('#left_menu_show').hide('400'); return false">2h</a></li>
+            <li><a href="#" onclick="refresh_graph('dashboard','21600','',''); $('#left_menu_show').hide('400'); return false">6h</a></li>
+            <li><a href="#" onclick="refresh_graph('dashboard','43200','',''); $('#left_menu_show').hide('400'); return false">12h</a></li>
+            <li><a href="#" onclick="refresh_graph('dashboard','86400','',''); $('#left_menu_show').hide('400'); return false">1 day</a></li>
+            <li><a href="#" onclick="refresh_graph('dashboard','172800','',''); $('#left_menu_show').hide('400'); return false">2 days</a></li>
+            <li><a href="#" onclick="refresh_graph('dashboard','604800','',''); $('#left_menu_show').hide('400'); return false">1 week</a></li>
+            <li><a href="#" onclick="refresh_graph('dashboard','2592000','',''); $('#left_menu_show').hide('400'); return false">1 month</a></li>
+            <li><a href="#" onclick="refresh_graph('dashboard','15552000','',''); $('#left_menu_show').hide('400'); return false">6 months</a></li>
+            <li><a href="#" onclick="refresh_graph('dashboard','31104000','',''); $('#left_menu_show').hide('400'); return false">1 year</a></li>
+            <li><a href="#" onclick="Show_Popup($('.imggraph:first').attr('src')+'&amp;x=800&amp;y=350','','',''); $('#left_menu_show').hide('400'); return false">Custom</a></li>
+        </ul>
+    </div>
+    <img src="/img/refresh.png" style="cursor:pointer" onclick="refresh_graph('dashboard','','',''); return false" title="Refresh" alt="Refresh" />
+    <br />
+    <img src="/img/clock.png" style="cursor:pointer" onclick="$('#left_menu_show').toggle('400'); return false;" title="Time selector" alt="Time Selector" />
+    <br />
+    <a href="<?php echo $this->url('dashboard-view',array('project'=>$this->project->id_config_project,'server'=>$this->server->id_config_server)); ?>"><img src="/img/auto_refresh.png" title="Active auto refresh" alt="Auto Refresh" /></a>
+</div>
+    <div id="dashboard">
 <?php if($this->server) {
+
     echo '<h1>'.$this->server->server_name."</h1>\n";
 }?>
 <?php if($this->plugins) {
@@ -36,7 +88,9 @@ if ($this->project) {
         echo "<h2>$pluginName</h2>\n";
         foreach($plugins as $plugin)
         {
-
+            echo '<!--';
+            var_dump($plugin);
+            echo '-->';
             echo '<img class="imggraph" alt="rrd" src="'.
                 $this->url('graph-view',
                     array_merge(
@@ -62,3 +116,4 @@ if ($this->project) {
     }
 
 }?>
+    </div>

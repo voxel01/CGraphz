@@ -37,7 +37,7 @@ function refresh_graph(id,time_range,time_start,time_end) {
 			imgsrc+='&s='+time_start+'&e='+time_end;
 		} 
 		// On ajoute un timestamp a la fin pour forcer le refresh
-		imgsrc+='&timer='+timer2;
+		//imgsrc+='&timer='+timer2;
 
 		this.src=imgsrc;
 	});

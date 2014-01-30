@@ -224,3 +224,44 @@ ul.navigation ul ul li a:hover {
   background: #759FCF;
 }
 
+div#left_menu img {
+    border:0;
+    height:22px;
+    width:22px;
+    padding-bottom:2pt;
+}
+
+div#left_menu {
+    font-weight:bold;
+    position:fixed;
+    top:200pt;
+    float:left;
+    text-align:center;
+}
+
+div#left_menu_show {
+    position:fixed;
+    margin-left:18pt;
+    width:120pt;
+    padding:3pt;
+    border:1px solid #759FCF;
+    display:none;
+    background:#c5d6ea;
+    text-align:left;
+    -moz-border-radius: 5pt;
+    border-radius: 5pt;
+}
+
+div#left_menu_show ul {
+    list-style:none;
+    margin:0;
+    padding:0;
+    padding-left:8pt;
+    padding-top:3pt;
+    border:5px;
+}
+
+div#left_menu_show a {
+    text-decoration:none;
+    color:black;
+}

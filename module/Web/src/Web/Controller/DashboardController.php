@@ -6,20 +6,6 @@ use Zend\View\Model\ViewModel;
 
 class DashboardController extends AbstractActionController
 {
-    public function preDispatch()
-    {
-        $this->view->headLink()
-            ->prependStylesheet($this->basePath() . '/lib/css/demo_table.css','screen')
-            ->prependStylesheet($this->basePath() . '/lib/multiselect/css/common.css','screen')
-            ->prependStylesheet($this->basePath() . '/lib/multiselect/css/ui.multiselect.css','screen')
-            ;
-        $this->view->headScript()
-            ->prependFile($this->view->basePath() . '/lib/dyn_js.php')
-            ->prependFile($this->view->basePath() . '/lib/jquery.dataTables.min.js')
-            ->prependFile($this->view->basePath() . '/lib/multiselect/js/jquery.tmpl.1.1.1.js')
-            ->prependFile($this->view->basePath() . '/lib/multiselect/js/ui.multiselect.js')
-            ;
-    }
     public function viewAction()
     {
         $user = $this->getServiceLocator()->get('Core\Model\UserIdentity');

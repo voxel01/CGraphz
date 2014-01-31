@@ -30,11 +30,14 @@ function refresh_graph(id,time_range,time_start,time_end) {
 		if (time_range!='') {
 			imgsrc=removeqsvar(imgsrc,'s');
 			imgsrc=removeqsvar(imgsrc,'e');
-			imgsrc+='&s='+time_range;
+            imgsrc=addqsvar(imgsrc,'s',time_range);
+			//imgsrc+='&s='+time_range;
 		} else if (time_start!='' && time_end!='') {
 			imgsrc=removeqsvar(imgsrc,'s');
 			imgsrc=removeqsvar(imgsrc,'e');
-			imgsrc+='&s='+time_start+'&e='+time_end;
+            imgsrc=addqsvar(imgsrc,'s',time_start);
+            imgsrc=addqsvar(imgsrc,'s',time_end);
+			//imgsrc+='&s='+time_start+'&e='+time_end;
 		} 
 		// On ajoute un timestamp a la fin pour forcer le refresh
 		//imgsrc+='&timer='+timer2;
@@ -82,8 +85,20 @@ function removeqsvar(url, varname) {
 			}
 		}
 		url=urlparts[0]+'?'+pars.join('&');
-	} 
+	}
 	return url;
+}
+
+function addqsvar(url, varname, value) {
+    var urlparts = url.split('?');
+    if (urlparts.length>=2) {
+        url += '&';
+    }
+    else {
+        url += '?';
+    }
+    url += encodeURIComponent(varname)+'='+encodeURIComponent(value);
+    return url;
 }
 
 function Show_Popup(url,time_range,time_start,time_end) {

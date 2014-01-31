@@ -52,10 +52,21 @@ class GraphController extends AbstractActionController
         {
             $graph->setRrdtool($config->collectd->rrdtool);
         }
-
+        $duration = abs(intval($this->params()->fromQuery('s')));
+        if(!$duration)
+        {
+            $duration = abs(intval($this->params('secondsDuration',3600)));
+        }
+        $secondsOffset = abs(intval($this->params()->fromQuery('e')));
+        if(!$secondsOffset)
+        {
+            $secondsOffset = abs(intval($this->params('secondsOffset',0)));
+        }
+        error_log('Duration: '.$duration);
+        error_log('URI: '.$_SERVER['REQUEST_URI']);
         $rrdrenderer = $graph->getRrdRender();
-        $rrdrenderer->setSecondsDuration(abs(intval($this->params('secondsDuration',3600))));
-        $rrdrenderer->setSecondsOffset(abs(intval($this->params('secondsOffset',0))));
+        $rrdrenderer->setSecondsDuration($duration);
+        $rrdrenderer->setSecondsOffset($secondsOffset);
 
         $response = $this->getResponse();
 

@@ -6,7 +6,7 @@ return array(
             'graph-view' => array(
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => array(
-                    'route' => '/graph/:host/:plugin/:pluginCategory/:pluginInstance/:type/:typeCategory/:typeInstance[/:secondsDuration[/:secondsOffset]]/graph.png[&s=:secondsOffset][?time_start=:secondsOffset[&time_end=:secondsDuration]]',
+                    'route' => '/graph/:host/:plugin/:pluginCategory/:pluginInstance/:type/:typeCategory/:typeInstance[/:secondsDuration[/:secondsOffset]]/graph.png',
                     'constraints' => array(
                         'host' => '[a-zA-Z0-9._-]+',
                         'plugin' => '[a-z=A-Z0-9-]+',

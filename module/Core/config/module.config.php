@@ -118,6 +118,21 @@ return array(
                 $resultSetPrototype->setArrayObjectPrototype($sm->get('Core\Model\Project'));
                 return new TableGateway('config_project', $dbAdapter, null, $resultSetPrototype);
             },
+            'Core\Model\Server' => function ($sm) {
+                $filter = new Core\Model\Server();
+                return $filter;
+            },
+            'Core\Model\ServerTable' =>  function($sm) {
+                $tableGateway = $sm->get('ServerTableGateway');
+                $table = new \Core\Model\ServerTable($tableGateway);
+                return $table;
+            },
+            'ServerTableGateway' => function ($sm) {
+                $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                $resultSetPrototype = new ResultSet();
+                $resultSetPrototype->setArrayObjectPrototype($sm->get('Core\Model\Server'));
+                return new TableGateway('config_server', $dbAdapter, null, $resultSetPrototype);
+            },
         )
     ),
     'controllers' => array(

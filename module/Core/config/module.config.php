@@ -148,6 +148,21 @@ return array(
                 $resultSetPrototype->setArrayObjectPrototype($sm->get('Core\Model\Role'));
                 return new TableGateway('config_role', $dbAdapter, null, $resultSetPrototype);
             },
+            'Core\Model\Environment' => function ($sm) {
+                $filter = new \Core\Model\Environment();
+                return $filter;
+            },
+            'Core\Model\EnvironmentTable' =>  function($sm) {
+                $tableGateway = $sm->get('EnvironmentTableGateway');
+                $table = new \Core\Model\EnvironmentTable($tableGateway);
+                return $table;
+            },
+            'EnvironmentTableGateway' => function ($sm) {
+                $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                $resultSetPrototype = new ResultSet();
+                $resultSetPrototype->setArrayObjectPrototype($sm->get('Core\Model\Environment'));
+                return new TableGateway('config_environment', $dbAdapter, null, $resultSetPrototype);
+            },
         )
     ),
     'controllers' => array(

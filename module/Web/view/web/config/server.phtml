@@ -1,0 +1,134 @@
+<?php
+$this->headLink()
+    ->appendStylesheet($this->basePath() . '/lib/multiselect/css/common.css','screen')
+    ->appendStylesheet($this->basePath() . '/lib/multiselect/css/ui.multiselect.css','screen');
+?>
+<h1><?php echo $this->translate('Manage servers');?></h1>
+<table border="0" cellpadding="0" cellspacing="0" id="table_server" class="table_admin">
+    <thead>
+    <tr>
+        <th><?php echo $this->translate('Server');?></th>
+        <th><?php echo $this->translate('Description');?></th>
+    </tr>
+    </thead>
+    <tbody>
+
+        <?php
+    foreach($this->serverList as $server)
+    {
+        echo "\t\t<tr><td><a href='".$this->url('config-server',array('id_config_server'=>$server->id_config_server,'function'=>\Web\Controller\ConfigController::FUNCT_EDIT))."'>".$server->server_name."</a></td><td>".$server->server_description."</td></tr>\n";
+    }
+    ?>
+    </tbody>
+</table>
+<div class="spacer">&nbsp;</div><div class="spacer">&nbsp;</div>
+<fieldset>
+    <?php if(isset($this->serverNew))  { ?>
+    <fieldset>
+        <legend><?php echo $this->translate('Add');?></legend>
+        <form name="f_form_server" method="post" action="<?php echo $this->url('config-server',array('function'=>\Web\Controller\ConfigController::FUNCT_ADD));?>">
+        <input type="hidden" name="f_id_config_server" id="f_id_config_server" value="" />
+            <select name="f_server_name[]" id="f_server_name" class="multiselect" multiple="multiple">
+                <?php
+                    foreach($this->serverNew as $server)
+                    {
+                        echo "<option value=\"".base64_encode($server)."\">$server</option>";
+                    }
+                ?>
+            </select>
+            <br />
+            <label for="f_server_description"><?php echo $this->translate('Description');?></label>
+            <input type="text" name="f_server_description" id="f_server_description" value="" /><br />
+            <label for="f_server_version"><?php echo $this->translate('Collectd version');?></label>
+            <select name="f_server_version" id="f_server_version">
+                <option value="3">3</option><option value="4">4</option><option value="5" selected="selected">5</option>
+            </select><br />
+            <input type="submit" name="f_submit_server" id="f_submit_server" value="Submit" />
+        </form>
+    </fieldset>
+    <fieldset>
+        <legend><?php echo $this->translate('Clean');?></legend>
+        <form name="f_form_del_server_check" method="post" action="<?php echo $this->url('config-server',array('function'=>\Web\Controller\ConfigController::FUNCT_DEL));?>">
+        <select name="f_server_name_to_del[]" id="f_server_name_to_del" class="multiselect" multiple="multiple">
+        </select><br />
+
+        <input type="submit" name="f_del_server_check" id="f_del_server_check" value="<?php echo $this->translate('Delete');?>" />
+        </form>
+    </fieldset>
+    <?php } elseif($this->server) { ?>
+    <legend><?php echo $this->server->server_name;?></legend>
+    <fieldset>
+        <legend><?php echo $this->translate('Delete');?></legend>
+        <form name="f_form_del_server_check" method="post" action="<?php echo $this->url('config-server',array('id_config_server'=>$this->server->id_config_server,'function'=>\Web\Controller\ConfigController::FUNCT_DEL));?>">
+            <input type="submit" name="f_del_server_check" value="<?php echo $this->translate('Delete');?>" />
+        </form>
+    </fieldset>
+    <fieldset>
+        <legend><?php echo $this->translate('Edit');?></legend>
+        <form name="f_form_del_server_check" method="post" action="<?php echo $this->url('config-server',array('id_config_server'=>$this->server->id_config_server,'function'=>\Web\Controller\ConfigController::FUNCT_EDIT));?>">
+        <label for="f_server_description"><?php echo $this->translate('Description');?></label>
+        <input type="text" name="f_server_description" value="<?php echo $this->server->server_description;?>" /><br />
+        <label for="f_server_version"><?php echo $this->translate('Collectd version');?></label>
+        <select name="f_server_version">
+            <?php foreach(array(3,4,5) as $version) { ?>
+                <option value="<?php echo $version;?>"<?php if($version== $this->server->collectd_version){ echo " selected=\"selected\"";}?>><?php echo $version;?></option>
+            <?php } ?>
+        </select><br />
+        <input type="submit" name="f_submit_server" value="<?php echo $this->translate('Submit');?>" />
+        </form>
+    </fieldset>
+    <?php
+
+    //var_dump($this->projects);
+    echo $this->partial('web/partial/edit.phtml',array(
+        'title' => 'Projects',
+        'tableHeaders' => array('project'=>'Project','project_desciption'=>'Description'),
+        'valuesActive' => $this->projects['member'],
+        'valuesAvailable' => $this->projects['available'],
+        'idField' => 'id_config_project',
+        'descField' => 'project',
+        'type' => 'project',
+        'url' => $this->url('config-server',array('function'=>\Web\Controller\ConfigController::FUNCT_PROJECT,'id_config_server'=>$this->server->id_config_server)),
+    ));
+
+    echo $this->partial('web/partial/edit.phtml',array(
+        'title' => 'Roles',
+        'tableHeaders' => array('role'=>'Role','role_desciption'=>'Description'),
+        'valuesActive' => $this->roles['member'],
+        'valuesAvailable' => $this->roles['available'],
+        'idField' => 'id_config_role',
+        'descField' => 'role',
+        'type' => 'role',
+        'url' => $this->url('config-server',array('function'=>\Web\Controller\ConfigController::FUNCT_ROLE,'id_config_server'=>$this->server->id_config_server)),
+    ));
+    echo $this->partial('web/partial/edit.phtml',array(
+        'title' => 'Environments',
+        'tableHeaders' => array('environment'=>'Environment','environment_desciption'=>'Description'),
+        'valuesActive' => $this->environments['member'],
+        'valuesAvailable' => $this->environments['available'],
+        'idField' => 'id_config_environment',
+        'descField' => 'environment',
+        'type' => 'environment',
+        'url' => $this->url('config-server',array('function'=>\Web\Controller\ConfigController::FUNCT_ENV,'id_config_server'=>$this->server->id_config_server)),
+    ));
+    ?>
+    <?php } ?>
+</fieldset>
+
+
+
+<script language="javascript">
+    $(function(){
+        $.localise('ui.multiselect', {language: 'en',  path: '<?php echo $this->basepath();?>/lib/multiselect/locale/'});
+        $(".multiselect").multiselect();
+    });
+
+    $(document).ready(function() {
+        $('.table_admin').dataTable( {
+            "bStateSave": true,
+            "oLanguage": {
+                "sUrl": "<?php echo $this->basepath();?>/lib/dataTables/locale/ui.dataTables-en.js"
+            }
+        });
+    });
+</script>

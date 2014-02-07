@@ -84,8 +84,8 @@ return array(
                             'pages' => array(
                                 array(
                                     'label' => 'Servers',
-                                    'route' => 'dashboard-view',
-                                    'resource' => 'mvc:dashboard-view',
+                                    'route' => 'config-server',
+                                    'resource' => 'mvc:config-server',
                                 ),
                                 array(
                                     'label' => 'Projects',
@@ -178,6 +178,22 @@ return array(
                         'controller' => 'Web\Controller\Perm',
                         'action' => 'group',
                         'id_auth_group' => '0',
+                        'function' => 'show',
+                    ),
+                ),
+            ),
+            'config-server' => array(
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => array(
+                    'route' => '/settings/server[/:id_config_server[/:function]]',
+                    'constraints' => array(
+                        'id_config_server' => '[0-9]+',
+                        'function' => '(show|edit|add|delete|user|project|environment|role)',
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Web\Controller\Config',
+                        'action' => 'server',
+                        'id_config_server' => '0',
                         'function' => 'show',
                     ),
                 ),
@@ -277,6 +293,7 @@ return array(
             'Web\Controller\Auth' => 'Web\Controller\AuthController',
             'Web\Controller\Dashboard' => 'Web\Controller\DashboardController',
             'Web\Controller\Perm' => 'Web\Controller\PermController',
+            'Web\Controller\Config' => 'Web\Controller\ConfigController',
         ),
     ),
     'view_manager' => array(

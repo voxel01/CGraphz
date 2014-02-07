@@ -110,4 +110,57 @@ class ProjectTable
         ));
         $sql->prepareStatementForSqlObject($ins)->execute();
     }
+
+
+
+    public function getProjectsToServer(Server $server)
+    {
+        $sql = $this->tableGateway->getSql();
+
+        $select = $sql->select();
+        $expression = new Expression('config_server_project.id_config_project = '.$this->tableGateway->getTable().'.id_config_project AND (id_config_server='.intval($server->id_config_server).')');
+        $select->join(
+            'config_server_project',$expression,
+            array('id_config_server'),
+            Select::JOIN_LEFT.' '.Select::JOIN_OUTER
+        );
+        //echo $select->getSqlString();exit();
+
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+        $servers = array('member'=>array(),'available'=>array());
+        $proto = $this->tableGateway->getResultSetPrototype()->getArrayObjectPrototype();
+        foreach($result as $row)
+        {
+            $ins = ($row['id_config_server'])?'member':'available';
+            $g = clone $proto;
+            $g->exchangeArray($row);
+            $servers[$ins][] = $g;
+        }
+        return $servers;
+    }
+
+    public function dropProjectFromServer(Server $server=null,$projectId)
+    {
+        $where = new \Zend\Db\Sql\Where();
+        $where->addPredicate(new Operator('id_config_project',Operator::OPERATOR_EQUAL_TO,$projectId));
+        if($server)
+        {
+            $where->andPredicate(new Operator('id_config_server',Operator::OPERATOR_EQUAL_TO,$server->id_config_server));
+        }
+
+        $sql = new \Zend\Db\Sql\Sql($this->tableGateway->getAdapter());
+        $del = $sql->delete('config_server_project')->where($where);
+        $sql->prepareStatementForSqlObject($del)->execute();
+    }
+
+    public function addProjectToServer(Server $server, $projectId)
+    {
+        $sql = new \Zend\Db\Sql\Sql($this->tableGateway->getAdapter());
+        $ins = $sql->insert('config_server_project');
+        $ins->values(array(
+            'id_config_project'=>$projectId,
+            'id_config_server'=>$server->id_config_server
+        ));
+        $sql->prepareStatementForSqlObject($ins)->execute();
+    }
 }

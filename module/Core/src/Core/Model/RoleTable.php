@@ -80,13 +80,13 @@ class RoleTable
         return $servers;
     }
 
-    public function dropServerFromRole(Role $role=null,$serverId)
+    public function dropRoleFromServer(Server $server=null,$roleId)
     {
         $where = new \Zend\Db\Sql\Where();
-        $where->addPredicate(new Operator('id_config_server',Operator::OPERATOR_EQUAL_TO,$serverId));
-        if($role)
+        $where->addPredicate(new Operator('id_config_role',Operator::OPERATOR_EQUAL_TO,$roleId));
+        if($server)
         {
-            $where->andPredicate(new Operator('id_config_role',Operator::OPERATOR_EQUAL_TO,$role->id_config_role));
+            $where->andPredicate(new Operator('id_config_server',Operator::OPERATOR_EQUAL_TO,$server->id_config_server));
         }
 
         $sql = new \Zend\Db\Sql\Sql($this->tableGateway->getAdapter());
@@ -94,13 +94,13 @@ class RoleTable
         $sql->prepareStatementForSqlObject($del)->execute();
     }
 
-    public function addServerToRole(Role $role, $serverId)
+    public function addRoleToServer(Server $server, $roleId)
     {
         $sql = new \Zend\Db\Sql\Sql($this->tableGateway->getAdapter());
         $ins = $sql->insert('config_role_server');
         $ins->values(array(
-            'id_config_role'=>$role->id_config_role,
-            'id_config_server'=>$serverId
+            'id_config_role'=>$roleId,
+            'id_config_server'=>$server->id_config_server
         ));
         $sql->prepareStatementForSqlObject($ins)->execute();
     }

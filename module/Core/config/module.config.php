@@ -83,13 +83,13 @@ return array(
                 return $user;
             },
             'Core\Model\PluginFilter' => function ($sm) {
-                $filter = new Core\Model\PluginFilter();
+                $filter = new \Core\Model\PluginFilter();
                 $config = new \Zend\Config\Config($this->getServiceLocator()->get('Config'));
                 $filter->setConfig($config->collectd);
                 return $filter;
             },
             'Core\Model\Filter' => function ($sm) {
-                $filter = new Core\Model\Filter();
+                $filter = new \Core\Model\Filter();
                 return $filter;
             },
             'Core\Model\FilterTable' =>  function($sm) {
@@ -104,7 +104,7 @@ return array(
                 return new TableGateway('config_plugin_filter', $dbAdapter, null, $resultSetPrototype);
             },
             'Core\Model\Project' => function ($sm) {
-                $filter = new Core\Model\Project();
+                $filter = new \Core\Model\Project();
                 return $filter;
             },
             'Core\Model\ProjectTable' =>  function($sm) {
@@ -119,7 +119,7 @@ return array(
                 return new TableGateway('config_project', $dbAdapter, null, $resultSetPrototype);
             },
             'Core\Model\Server' => function ($sm) {
-                $filter = new Core\Model\Server();
+                $filter = new \Core\Model\Server();
                 return $filter;
             },
             'Core\Model\ServerTable' =>  function($sm) {
@@ -132,6 +132,21 @@ return array(
                 $resultSetPrototype = new ResultSet();
                 $resultSetPrototype->setArrayObjectPrototype($sm->get('Core\Model\Server'));
                 return new TableGateway('config_server', $dbAdapter, null, $resultSetPrototype);
+            },
+            'Core\Model\Role' => function ($sm) {
+                $filter = new \Core\Model\Role();
+                return $filter;
+            },
+            'Core\Model\RoleTable' =>  function($sm) {
+                $tableGateway = $sm->get('RoleTableGateway');
+                $table = new \Core\Model\RoleTable($tableGateway);
+                return $table;
+            },
+            'RoleTableGateway' => function ($sm) {
+                $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                $resultSetPrototype = new ResultSet();
+                $resultSetPrototype->setArrayObjectPrototype($sm->get('Core\Model\Role'));
+                return new TableGateway('config_role', $dbAdapter, null, $resultSetPrototype);
             },
         )
     ),

@@ -115,9 +115,82 @@ class ConfigController extends AbstractActionController
 
     }
 
-    public function pluginAction()
+    public function filterAction()
     {
+        $function = $this->params('function',self::FUNCT_SHOW);
+        $params = array();
+        $request = $this->getRequest();
+        $filterTable = $this->getServiceLocator()->get('Core\Model\FilterTable');
 
+        if( $function == self::FUNCT_SHOW)
+        {
+            /* Nothing to do */
+        }
+        elseif($function==self::FUNCT_ADD && $request->isPost())
+        {
+            $f_desc = $this->params()->fromPost('f_plugin_filter_desc','');
+            $f_plugin = $this->params()->fromPost('f_plugin_filter_p','');
+            $f_plugin_instance = $this->params()->fromPost('f_plugin_filter_pi','');
+            $f_type = $this->params()->fromPost('f_plugin_filter_t','');
+            $f_type_instance = $this->params()->fromPost('f_plugin_filter_ti','');
+            $f_order = $this->params()->fromPost('f_plugin_filter_plugin_order','');
+            //@todo: Paramchecks
+            $p = $this->getServiceLocator()->get('Core\Model\Filter');
+            //$p = new \Core\Model\Filter();
+            $p->plugin_filter_desc = $f_desc;
+            $p->plugin = $f_plugin;
+            $p->plugin_instance = $f_plugin_instance;
+            $p->type = $f_type;
+            $p->type_instance = $f_type_instance;
+            $p->plugin_order = $f_order;
+            $filterTable->saveFilter($p);
+        }
+        elseif($function==self::FUNCT_EDIT || $function==self::FUNCT_DEL)
+        {
+
+            try{
+                $filter = $filterTable->getFilter(intval($this->params('id_config_plugin_filter',0)));
+            }
+            catch(\Exception $e)
+            {
+                $filter = false;
+            }
+            if(!$filter)
+            {
+                return $this->redirect()->toRoute('config-filter',array('function',self::FUNCT_SHOW));
+            }
+
+            if($function==self::FUNCT_DEL)
+            {
+                $filterTable->deleteFilter($filter->id_config_plugin_filter);
+                return $this->redirect()->toRoute('config-filter',array('function',self::FUNCT_SHOW));
+            }
+            elseif($function==self::FUNCT_EDIT && $request->isPost())
+            {
+                //var_dump($filter);exit();
+                $f_desc = $this->params()->fromPost('f_plugin_filter_desc','');
+                $f_plugin = $this->params()->fromPost('f_plugin_filter_p','');
+                $f_plugin_instance = $this->params()->fromPost('f_plugin_filter_pi','');
+                $f_type = $this->params()->fromPost('f_plugin_filter_t','');
+                $f_type_instance = $this->params()->fromPost('f_plugin_filter_ti','');
+                $f_order = $this->params()->fromPost('f_plugin_filter_plugin_order','');
+                //@todo: Paramchecks
+                $filter->plugin_filter_desc = $f_desc;
+                $filter->plugin = $f_plugin;
+                $filter->plugin_instance = $f_plugin_instance;
+                $filter->type = $f_type;
+                $filter->type_instance = $f_type_instance;
+                $filter->plugin_order = $f_order;
+                $filterTable->saveFilter($filter);
+            }
+            $params['filter'] = $filter;
+        }
+        else{
+            return $this->redirect()->toRoute('config-filter',array('function',self::FUNCT_SHOW));
+        }
+
+        $params['filterList'] = $filterTable->fetchAll();
+        return new ViewModel($params);
     }
 
     public function dynamic_dashboardAction()

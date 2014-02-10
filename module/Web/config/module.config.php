@@ -94,8 +94,8 @@ return array(
                                 ),
                                 array(
                                     'label' => 'Filters',
-                                    'route' => 'dashboard-view',
-                                    'resource' => 'mvc:dashboard-view',
+                                    'route' => 'config-filter',
+                                    'resource' => 'mvc:config-plugin',
                                 ),
                                 array(
                                     'label' => 'Dynamic Dashboards',
@@ -194,6 +194,22 @@ return array(
                         'controller' => 'Web\Controller\Config',
                         'action' => 'server',
                         'id_config_server' => '0',
+                        'function' => 'show',
+                    ),
+                ),
+            ),
+            'config-filter' => array(
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => array(
+                    'route' => '/settings/filter[/:id_config_plugin_filter[/:function]]',
+                    'constraints' => array(
+                        'id_config_server' => '[0-9]+',
+                        'function' => '(show|edit|add|delete)',
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Web\Controller\Config',
+                        'action' => 'filter',
+                        'id_config_plugin_filter' => '0',
                         'function' => 'show',
                     ),
                 ),

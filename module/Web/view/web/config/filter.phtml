@@ -1,0 +1,97 @@
+<?php
+$this->headLink()
+    ->appendStylesheet($this->basePath() . '/lib/multiselect/css/common.css','screen')
+    ->appendStylesheet($this->basePath() . '/lib/multiselect/css/ui.multiselect.css','screen');
+?>
+<h1><?php echo $this->translate('Manage plugin filters');?></h1>
+<table border="0" cellpadding="0" cellspacing="0" id="table_server" class="table_admin">
+    <thead>
+    <tr>
+        <th><?php echo $this->translate('Description');?></th>
+        <th><?php echo $this->translate('Plugin');?></th>
+        <th><?php echo $this->translate('Plugin Instance');?></th>
+        <th><?php echo $this->translate('Type');?></th>
+        <th><?php echo $this->translate('Type Instance');?></th>
+        <th><?php echo $this->translate('Displayed order');?></th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php
+    $vars = array('plugin_filter_desc','plugin','plugin_instance','type','type_instance','plugin_order');
+    foreach($this->filterList as $filter)
+    {
+        echo "\t\t<tr>";
+        foreach($vars as $var)
+        {
+            echo "\t\t\t<td><a href='".$this->url('config-filter',array('id_config_plugin_filter'=>$filter->id_config_plugin_filter,'function'=>\Web\Controller\ConfigController::FUNCT_EDIT))."'>".$filter->$var."</a></td>\n";
+        }
+        echo "\t\t</tr>";
+    }
+    ?>
+    </tbody>
+
+</table>
+<div class="spacer">&nbsp;</div><div class="spacer">&nbsp;</div>
+
+    <fieldset>
+    <?php if(!$this->filter) { ?>
+        <fieldset><legend><?php echo $this->translate('Add');?></legend>
+            <form name="f_form_plugin_filter" method="post" action="<?php echo $this->url('config-filter',array('id_config_plugin_filter'=>$filter->id_config_plugin_filter,'function'=>\Web\Controller\ConfigController::FUNCT_ADD));?>">
+                <label for="f_plugin_filter_desc"><?php echo $this->translate('Description');?></label>
+                <input type="text" name="f_plugin_filter_desc" id="f_plugin_filter_desc" value="" /><br />
+                <label for="f_plugin_filter_p"><?php echo $this->translate('Plugin');?></label>
+                <input type="text" name="f_plugin_filter_p" id="f_plugin_filter_p" value="" />&nbsp;(<?php echo $this->translate('regexp');?>)<br />
+                <label for="f_plugin_filter_pi"><?php echo $this->translate('Plugin Instance');?></label>
+                <input type="text" name="f_plugin_filter_pi" id="f_plugin_filter_pi" value="" />&nbsp;(<?php echo $this->translate('regexp');?>)<br />
+                <label for="f_plugin_filter_t"><?php echo $this->translate('Type');?></label>
+                <input type="text" name="f_plugin_filter_t" id="f_plugin_filter_t" value="" />&nbsp;(<?php echo $this->translate('regexp');?>)<br />
+                <label for="f_plugin_filter_ti"><?php echo $this->translate('Type Instance');?></label>
+                <input type="text" name="f_plugin_filter_ti" id="f_plugin_filter_ti" value="" />&nbsp;(<?php echo $this->translate('regexp');?>)<br />
+                <label for="f_plugin_filter_plugin_order"><?php echo $this->translate('Displayed order');?></label>
+                <input type="text" name="f_plugin_filter_plugin_order" id="f_plugin_filter_plugin_order" value="" />&nbsp;(<?php echo $this->translate('int');?>)<br />
+                <input type="submit" name="f_submit_plugin_filter" id="f_submit_plugin_filter" value="<?php echo $this->translate('Submit');?>" />
+            </form>
+        </fieldset>
+    <?php } else { ?>
+
+        <fieldset><legend><?php echo $this->translate('Edit');?></legend>
+            <form name="f_form_plugin_filter" method="post" action="<?php echo $this->url('config-filter',array('id_config_plugin_filter'=>$filter->id_config_plugin_filter,'function'=>\Web\Controller\ConfigController::FUNCT_EDIT));?>">
+                <label for="f_plugin_filter_desc"><?php echo $this->translate('Description');?></label>
+                <input type="text" name="f_plugin_filter_desc" id="f_plugin_filter_desc" value="<?php echo $this->filter->plugin_filter_desc;?>" /><br />
+                <label for="f_plugin_filter_p"><?php echo $this->translate('Plugin');?></label>
+                <input type="text" name="f_plugin_filter_p" id="f_plugin_filter_p" value="<?php echo $this->filter->plugin;?>" />&nbsp;(<?php echo $this->translate('regexp');?>)<br />
+                <label for="f_plugin_filter_pi"><?php echo $this->translate('Plugin Instance');?></label>
+                <input type="text" name="f_plugin_filter_pi" id="f_plugin_filter_pi" value="<?php echo $this->filter->plugin_instance;?>" />&nbsp;(<?php echo $this->translate('regexp');?>)<br />
+                <label for="f_plugin_filter_t"><?php echo $this->translate('Type');?></label>
+                <input type="text" name="f_plugin_filter_t" id="f_plugin_filter_t" value="<?php echo $this->filter->type;?>" />&nbsp;(<?php echo $this->translate('regexp');?>)<br />
+                <label for="f_plugin_filter_ti"><?php echo $this->translate('Type Instance');?></label>
+                <input type="text" name="f_plugin_filter_ti" id="f_plugin_filter_ti" value="<?php echo $this->filter->type_instance;?>" />&nbsp;(<?php echo $this->translate('regexp');?>)<br />
+                <label for="f_plugin_filter_plugin_order"><?php echo $this->translate('Displayed order');?></label>
+                <input type="text" name="f_plugin_filter_plugin_order" id="f_plugin_filter_plugin_order" value="<?php echo $this->filter->plugin_order;?>" />&nbsp;(<?php echo $this->translate('int');?>)<br />
+                <input type="submit" name="f_submit_plugin_filter" id="f_submit_plugin_filter" value="<?php echo $this->translate('Submit');?>" />
+            </form>
+
+            <form name="f_form_del_plugin_filter" method="post" action="<?php echo $this->url('config-filter',array('id_config_plugin_filter'=>$filter->id_config_plugin_filter,'function'=>\Web\Controller\ConfigController::FUNCT_DEL));?>">
+                <input type="submit" name="f_del_plugin_filter" id="f_del_plugin_filter" value="<?php echo $this->translate('Delete');?>" />
+            </form>
+        </fieldset>
+    <?php } ?>
+    </fieldset>
+
+
+
+<script language="javascript">
+    $(function(){
+        $.localise('ui.multiselect', {language: 'en',  path: '<?php echo $this->basepath();?>/lib/multiselect/locale/'});
+        $(".multiselect").multiselect();
+    });
+
+    $(document).ready(function() {
+        $('.table_admin').dataTable( {
+            "bStateSave": true,
+            "oLanguage": {
+                "sUrl": "<?php echo $this->basepath();?>/lib/dataTables/locale/ui.dataTables-en.js"
+            }
+        });
+    });
+</script>

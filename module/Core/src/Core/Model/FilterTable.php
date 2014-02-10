@@ -37,10 +37,10 @@ class FilterTable
 
     public function saveFilter(Filter $filter)
     {
+        $id = (int)$filter->id_config_plugin_filter;
         $data = get_object_vars($filter);
         unset($data['id_config_plugin_filter']);
 
-        $id = (int)$filter->id_config_plugin_filter;
         if ($id == 0) {
             $this->tableGateway->insert($data);
             return $this->tableGateway->getLastInsertValue();
@@ -49,7 +49,7 @@ class FilterTable
                 $this->tableGateway->update($data, array('id_config_plugin_filter' => $id));
                 return $id;
             } else {
-                throw new \Exception('Module id does not exist');
+                throw new \Exception('Filter id does not exist');
             }
         }
     }

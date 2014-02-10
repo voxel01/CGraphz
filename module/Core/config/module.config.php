@@ -67,11 +67,6 @@ return array(
                 $resultSetPrototype->setArrayObjectPrototype($sm->get('Core\Model\User'));
                 return new TableGateway('auth_user', $dbAdapter, null, $resultSetPrototype);
             },
-            'Core\Model\Project' => function ($sm) {
-                $p = new Core\Model\Project();
-                $p->setDbAdapter($sm->get('Zend\Db\Adapter\Adapter'));
-                return $p;
-            },
             'Core\Model\UserIdentity' => function ($sm) {
                 $as = $sm->get('Web\Auth\Service');
                 if ($as->hasIdentity() === true) {
@@ -104,8 +99,9 @@ return array(
                 return new TableGateway('config_plugin_filter', $dbAdapter, null, $resultSetPrototype);
             },
             'Core\Model\Project' => function ($sm) {
-                $filter = new \Core\Model\Project();
-                return $filter;
+                $p = new Core\Model\Project();
+                $p->setDbAdapter($sm->get('Zend\Db\Adapter\Adapter'));
+                return $p;
             },
             'Core\Model\ProjectTable' =>  function($sm) {
                 $tableGateway = $sm->get('ProjectTableGateway');
